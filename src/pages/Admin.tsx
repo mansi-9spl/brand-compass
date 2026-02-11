@@ -3,31 +3,33 @@ import { useOutletContext } from "react-router-dom";
 import {
   Plus, Archive, FolderSync, Clock, AlertTriangle, ExternalLink,
   Link2, FileText, Server, RefreshCw, FolderOpen, Unlink, HardDrive,
-  Cloud, Database, Globe,
+  Cloud, Database, Globe, Mail, FileSpreadsheet, Presentation, FolderGit2,
 } from "lucide-react";
 import { brands, type Brand } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-interface StorageProvider {
+interface DataSource {
   id: string;
   name: string;
+  description: string;
   icon: React.ElementType;
   connected: boolean;
   account?: string;
-  importFolder?: string;
+  importScope?: string;
   lastSynced?: string;
   filesCount?: number;
   newFiles?: number;
+  indexedTypes?: string;
 }
 
-const allProviders: StorageProvider[] = [
-  { id: "gdrive", name: "Google Drive", icon: HardDrive, connected: true, account: "team@acmecorp.com", importFolder: "Brand Assets", lastSynced: "2 hours ago", filesCount: 24, newFiles: 0 },
-  { id: "sharepoint", name: "SharePoint", icon: Cloud, connected: false },
-  { id: "onedrive", name: "OneDrive", icon: Database, connected: false },
-  { id: "dropbox", name: "Dropbox", icon: HardDrive, connected: false },
-  { id: "box", name: "Box", icon: FolderOpen, connected: false },
-  { id: "s3", name: "AWS S3", icon: Server, connected: false },
+const allProviders: DataSource[] = [
+  { id: "gdrive", name: "Google Drive", description: "Files & folders", icon: HardDrive, connected: true, account: "team@acmecorp.com", importScope: "Brand Assets folder", lastSynced: "2 hours ago", filesCount: 24, newFiles: 0, indexedTypes: "Docs, Sheets, Slides, PDFs" },
+  { id: "gdocs", name: "Google Docs", description: "Documents & wikis", icon: FileText, connected: true, account: "team@acmecorp.com", importScope: "All team docs", lastSynced: "1 hour ago", filesCount: 38, newFiles: 2, indexedTypes: "Text documents" },
+  { id: "gsheets", name: "Google Sheets", description: "Spreadsheets & data", icon: FileSpreadsheet, connected: true, account: "team@acmecorp.com", importScope: "Brand data sheets", lastSynced: "3 hours ago", filesCount: 12, newFiles: 0, indexedTypes: "Spreadsheets" },
+  { id: "gslides", name: "Google Slides", description: "Presentations", icon: Presentation, connected: false },
+  { id: "shared-drives", name: "Shared Drives", description: "Team shared drives", icon: FolderGit2, connected: false },
+  { id: "gmail", name: "Gmail", description: "Emails & threads", icon: Mail, connected: false },
 ];
 
 const Admin = () => {
@@ -159,7 +161,7 @@ const Admin = () => {
           </div>
 
           {/* Providers heading */}
-          <h3 className="text-sm font-semibold text-foreground mb-4">Cloud Storage Providers</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-4">Google Workspace Sources</h3>
 
           {/* Provider grid */}
           <div className="grid grid-cols-3 gap-4">
@@ -178,7 +180,10 @@ const Admin = () => {
                       <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center">
                         <Icon className="w-5 h-5 text-muted-foreground" />
                       </div>
-                      <span className="text-sm font-semibold text-foreground">{provider.name}</span>
+                      <div>
+                        <span className="text-sm font-semibold text-foreground">{provider.name}</span>
+                        <p className="text-xs text-muted-foreground">{provider.description}</p>
+                      </div>
                     </div>
                     <span
                       className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${
@@ -195,7 +200,8 @@ const Admin = () => {
                     <div className="flex-1 flex flex-col">
                       <p className="text-xs text-muted-foreground mb-1">{provider.account}</p>
                       <div className="text-xs text-muted-foreground space-y-1 mb-4">
-                        <p>Import from: <span className="text-foreground font-medium">{provider.importFolder}</span></p>
+                        <p>Scope: <span className="text-foreground font-medium">{provider.importScope}</span></p>
+                        <p>Indexed: <span className="text-foreground font-medium">{provider.indexedTypes}</span></p>
                         <div className="flex justify-between">
                           <span>Last synced</span>
                           <span className="text-foreground font-medium">{provider.lastSynced}</span>
